@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat << 'EOF' > /tmp/go++.m4
+cat << 'EOF' > /tmp/go-dark.m4
 define(`_reverse', `ifelse(`$#', `0', , `$#', `1', ``$1'', `_reverse(shift($@)), `$1'')')
 define(`_first', `$1')
 define(`_last', `_first(_reverse($*))')
@@ -31,14 +31,14 @@ undefine(`len')
 EOF
 
 if [ "$1" == "-i" ]; then
-  m4 -i /tmp/go++.m4 -
+  m4 -i /tmp/go-dark.m4 -
   exit 0
 fi
 
-for src in $(find . -iname '*.go++'); do
-  out="${src%.go++}.go"
+for src in $(find . -iname '*.dark'); do
+  out="${src%.dark}.go"
   echo "expanding $src -> $out"
-  m4 /tmp/go++.m4 $src > $out
+  m4 /tmp/go-dark.m4 $src > $out
   gofmt -l -w $out
 done
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ryannedolan/go++/predef"
+	"github.com/ryannedolan/go-dark/predef"
 	"strconv"
 )
 

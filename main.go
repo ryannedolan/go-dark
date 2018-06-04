@@ -10,7 +10,7 @@ import (
 func main() {
   args := os.Args[1:]
   gopath := os.Getenv("GOPATH")
-  path := gopath + "/src/github.com/ryannedolan/go++/go++"
+  path := gopath + "/src/github.com/ryannedolan/go-dark/go-dark"
   cmd := exec.Command(path, args...)
   if stdout, err := cmd.StdoutPipe(); err != nil {
     fmt.Println(err)
