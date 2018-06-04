@@ -1,0 +1,16 @@
+package main
+
+import (
+  "fmt"
+  "strconv"
+  "github.com/ryannedolan/go++/predef"
+)
+
+func main() {
+  a := []int{1, 2, 3}
+  b := iter(int).from(a).
+    fmap(a int => int = a + 1).
+    fmap(a int => string = strconv.Itoa(a) + "!").
+    array(string)
+  fmt.Println(b)
+}

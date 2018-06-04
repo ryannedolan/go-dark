@@ -1,0 +1,44 @@
+#!/bin/bash
+
+cat << 'EOF' > /tmp/go++.m4
+define(`_reverse', `ifelse(`$#', `0', , `$#', `1', ``$1'', `_reverse(shift($@)), `$1'')')
+define(`_first', `$1')
+define(`_last', `_first(_reverse($*))')
+define(`lambda', `func($*) _lambda_1')
+define(`_lambda_1', `interface{} { return $1 }')
+define(`Any', `interface{}')
+define(`A', `predef.`A'')
+define(`B', `predef.`B'')
+define(`C', `predef.`C'')
+define(`Tuple', `predef.Tuple$#{$*}')
+define(`Array', `ifelse(`$#', `0', `[]interface{}', `[]interface{}{$*}')')
+define(`match', `func(x interface{}) interface{} { switch x.(type) { case $1: return x; default: return nil } }')
+define(`collect', `_$1 := $1[0:0]; for _, v := range $1 { _$1 = append(_$1, _collect_1 ')
+define(`_collect_1', `$1 }')
+define(`_arrow_3', `regexp(`$1', `\(.*\)=>\(.*\)=\(.*\)', `$2(\1) $3(\2) $4(\3)')')
+define(`_arrow_4', `regexp(`$1', `\(.*\)=>\(.*\)=\(.*\)', `$2(\1) $3(\3), $4(\2)')')
+define(`_return', { return `$*' }) 
+define(`lambda', `_arrow_3(`$*', `_lambda_1', `_lambda_2', `_return')')
+define(`_lambda_1', func(`$*') )
+define(`_lambda_2', `$*')
+define(`_fmapThunk', `func(x interface{}, f interface{}) interface{} { return f.(func(x $1) interface{})(x.($1)) }')
+define(`iter', `predef.BuildIterator(_fmapThunk($1))')
+define(`fmap', `Fmap(_arrow_4(`$*', `_fmap_1', `_return', `iter'))')
+define(`_fmap_1', func(`$*') interface{})
+define(`array', `Build(func(ch chan interface{}) interface{} { arr := []$1{}; for x := range ch { arr = append(arr, x.($1)) }; return arr } )')
+define(`from', `From(func() chan interface{} { ch := make(chan interface{}); go func() { for _, e := range $1 { ch <- e }; close(ch) }(); return ch } )')
+undefine(`len')
+EOF
+
+if [ "$1" == "-i" ]; then
+  m4 -i /tmp/go++.m4 -
+  exit 0
+fi
+
+for src in $(find . -iname '*.go++'); do
+  out="${src%.go++}.go"
+  echo "expanding $src -> $out"
+  m4 /tmp/go++.m4 $src > $out
+  gofmt -l -w $out
+done
+
