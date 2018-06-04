@@ -11,11 +11,14 @@ func BenchmarkFmap(b *testing.B) {
 		ints[i] = i
 	}
 	b.ResetTimer()
-	_ = predef.BuildIterator(func(x interface{}, f interface{}) interface{} { return f.(func(x int) interface{})(x.(int)) }).From(func() []interface{} {
-		arr := make([]interface{}, 0)
-		for _, e := range ints {
-			arr = append(arr, e)
-		}
-		return arr
+	_ = predef.BuildIterator(func(x interface{}, f interface{}) interface{} { return f.(func(x int) interface{})(x.(int)) }).From(func() chan interface{} {
+		ch := make(chan interface{})
+		go func() {
+			for _, e := range ints {
+				ch <- e
+			}
+			close(ch)
+		}()
+		return ch
 	}).Fmap(func(x int) interface{} { return x + 1 }, predef.BuildIterator(func(x interface{}, f interface{}) interface{} { return f.(func(x int) interface{})(x.(int)) }))
 }

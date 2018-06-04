@@ -28,60 +28,53 @@ type Z interface{}
 
 type Iterator struct {
   fmapThunk func(x interface{}, f interface{}) interface{}
-  elems []interface{}
-}
-func (p *Iterator) next() interface{} {
-  x := p.elems[0]
-  p.elems = p.elems[1:]
-  return x
-}
-
-func (p *Iterator) hasNext() bool {
-  return len(p.elems) > 0
-}
-
-func (p *Iterator) push(x interface{}) {
-  p.elems = append(p.elems, x)
+  ch chan interface{}
 }
 
 func BuildIterator(f func(x interface{}, f interface{}) interface{}) Iterator {
-  return Iterator{f, make([]interface{}, 0)}
+  return Iterator{f, make(chan interface{})}
 }
 
 func (p Iterator) Filter(f interface{}, q Iterator) Iterator {
-  for p.hasNext() {
-    x := p.next()
-    if p.fmapThunk(x, f).(bool) {
-      q.push(x)
+  go func() {
+    for x := range p.ch {
+      if p.fmapThunk(x, f).(bool) {
+        q.ch <- x
+      }
     }
-  }
+    close(q.ch)
+  } ()
   return q
 }
 
 func (p Iterator) Fmap(f interface{}, q Iterator) Iterator {
-  for p.hasNext() {
-    x := p.next()
-    q.push(p.fmapThunk(x, f))
-  }
+  go func() {
+    for x := range p.ch {
+      q.ch <- p.fmapThunk(x, f)
+    }
+    close(q.ch)
+  } ()
   return q
 }
 
-func (p Iterator) Build(f func(arr []interface{}) interface{}) interface{} {
-  return f(p.elems)
+func (p Iterator) Build(f func(ch chan interface{}) interface{} ) interface{} {
+  return f(p.ch)
 }
 
-func (p Iterator) From(f func() []interface{}) Iterator {
-  p.elems = f()
+func (p Iterator) From(f func() chan interface{}) Iterator {
+  p.ch = f()
   return p
 }
 
 func (p Iterator) Collect(f interface{}, q Iterator) Iterator {
-  for p.hasNext() {
-    x := p.next()
-    if v := p.fmapThunk(x, f); v != nil {
-      q.push(v)
+  go func() {
+    for x := range p.ch {
+      if v := p.fmapThunk(x, f); v != nil {
+        q.ch <- v
+      }
     }
-  }
+    close(q.ch)
+  } ()
   return q
 }
 
