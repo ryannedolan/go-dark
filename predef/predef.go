@@ -30,15 +30,17 @@ type Iterator struct {
   fmapThunk func(x interface{}, f interface{}) interface{}
   elems []interface{}
 }
-func (p Iterator) next() interface{} {
-  return p.elems[0]
+func (p *Iterator) next() interface{} {
+  x := p.elems[0]
+  p.elems = p.elems[1:]
+  return x
 }
 
-func (p Iterator) hasNext() bool {
+func (p *Iterator) hasNext() bool {
   return len(p.elems) > 0
 }
 
-func (p Iterator) push(x interface{}) {
+func (p *Iterator) push(x interface{}) {
   p.elems = append(p.elems, x)
 }
 
@@ -64,7 +66,7 @@ func (p Iterator) Fmap(f interface{}, q Iterator) Iterator {
   return q
 }
 
-func (p Iterator) Build(f func(ch []interface{}) interface{}) interface{} {
+func (p Iterator) Build(f func(arr []interface{}) interface{}) interface{} {
   return f(p.elems)
 }
 

@@ -1,0 +1,26 @@
+package main
+
+import (
+  "testing"
+  "github.com/ryannedolan/go-dark/predef"
+)
+
+func TestFmap(t *testing.T) {
+  ints := []int{1, 2, 3, 4, 5}
+  res1 := iter(int).from(ints).fmap(x int => int = x + 1).array(int)
+  t.Log(res1)
+  if len(res1) != 5 {
+    t.Fatalf("len wrong")
+  }
+  if res1[0] != 2 || res1[1] != 3 || res1[2] != 4 || res1[3] != 5 || res1[4] != 6 {
+    t.Fatalf("array content wrong")
+  }
+  res2 := iter(int).from(res1).fmap(x int => int = x - 1).array(int)
+  t.Log(res2)
+  if len(res2) != 5 {
+    t.Fatalf("len wrong")
+  }
+  if res2[0] != 1 || res2[1] != 2 || res2[2] != 3 || res2[3] != 4 || res2[4] != 5 {
+    t.Fatalf("array content wrong")
+  }
+}

@@ -10,11 +10,9 @@ func main() {
 	a := []int{1, 2, 3}
 	b := predef.BuildIterator(func(x interface{}, f interface{}) interface{} { return f.(func(x int) interface{})(x.(int)) }).From(func() []interface{} {
 		arr := make([]interface{}, 0)
-		go func() {
-			for _, e := range a {
-				arr = append(arr, e)
-			}
-		}()
+		for _, e := range a {
+			arr = append(arr, e)
+		}
 		return arr
 	}).
 		Fmap(func(a int) interface{} { return a + 1 }, predef.BuildIterator(func(x interface{}, f interface{}) interface{} { return f.(func(x int) interface{})(x.(int)) })).
