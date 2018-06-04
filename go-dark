@@ -20,8 +20,8 @@ define(`iter', `predef.BuildIterator(_fmapThunk($1))')
 define(`fmap', `Fmap(_arrow_4(`$*', `_fmap_1', `_return', `iter'))')
 define(`_fmap_1', func(`$*') interface{})
 define(`filter', `Filter(_arrow_4(`$*', `_fmap_1', `_return', `iter'))')
-define(`array', `Build(func(ch chan interface{}) interface{} { arr := []$1{}; for x := range ch { arr = append(arr, x.($1)) }; return arr } ).([]$1)')
-define(`from', `From(func() chan interface{} { ch := make(chan interface{}); go func() { for _, e := range $1 { ch <- e }; close(ch) }(); return ch } )')
+define(`array', `Build(func(elems []interface{}) interface{} { arr := []$1{}; for _, x := range elems { arr = append(arr, x.($1)) }; return arr } ).([]$1)')
+define(`from', `From(func() []interface{} { arr := make([]interface{}, 0); go func() { for _, e := range $1 { arr = append(arr, e) }}(); return arr } )')
 undefine(`len')
 EOF
 
