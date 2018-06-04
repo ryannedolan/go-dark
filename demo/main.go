@@ -26,6 +26,6 @@ func main() {
 				arr = append(arr, x.(string))
 			}
 			return arr
-		})
+		}).([]string)
 	fmt.Println(b)
 }
