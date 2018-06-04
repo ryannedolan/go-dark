@@ -1,0 +1,15 @@
+package main
+
+import (
+  "testing"
+  "github.com/ryannedolan/go-dark/predef"
+)
+
+func BenchmarkFmap(b *testing.B) {
+  ints := make([]int, b.N)
+  for i := 0; i < b.N; i++ {
+    ints[i] = i
+  }
+  b.ResetTimer()
+  _ = iter(int).from(ints).fmap(x int => int = x + 1)
+}
