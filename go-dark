@@ -4,8 +4,6 @@ cat << 'EOF' > /tmp/go-dark.m4
 define(`_reverse', `ifelse(`$#', `0', , `$#', `1', ``$1'', `_reverse(shift($@)), `$1'')')
 define(`_first', `$1')
 define(`_last', `_first(_reverse($*))')
-define(`lambda', `func($*) _lambda_1')
-define(`_lambda_1', `interface{} { return $1 }')
 define(`Any', `interface{}')
 define(`Tuple', `predef.Tuple$#{$*}')
 define(`match', `func(x interface{}) interface{} { switch x.(type) { case $1: return x; default: return nil } }')
