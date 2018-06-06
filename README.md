@@ -10,7 +10,7 @@ Name your source files `*.dark` and run go-dark. This will produce corresponding
 
 In certain contexts, go-dark lets you express function literals using lambda expression of the form `args_list => return_type = expr`. This gets expanded to `func(args_list) return_type { return expr }`.
 
-    s := lambda(s string x => string = x + "!")("hello")
+    s := lambda(x string => string = x + "!")("hello")
     -> s = "hello!"
 
 ## Fmap, filter, and friends
